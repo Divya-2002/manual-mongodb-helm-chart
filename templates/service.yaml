@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mongodb-chart.fullname" . }}
+  labels:
+    app: {{ include "mongodb-chart.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 27017
+      protocol: TCP
+      name: mongodb
+  selector:
+    app: {{ include "mongodb-chart.name" . }}

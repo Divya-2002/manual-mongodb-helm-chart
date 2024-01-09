@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mongodb-chart.fullname" . }}
+  labels:
+    app: {{ include "mongodb-chart.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mongodb-chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "mongodb-chart.name" . }}
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:4.4
+          ports:
+            - containerPort: 27017
+              name: mongodb
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.security.adminUsername }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.security.adminPassword | quote }}
+      volumes:
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: {{ include "mongodb-chart.name" . }}
+
